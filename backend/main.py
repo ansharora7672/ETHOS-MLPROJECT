@@ -1,6 +1,7 @@
 from contextlib import asynccontextmanager
 from fastapi import FastAPI, HTTPException, UploadFile, File
 from fastapi.responses import JSONResponse
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 import pandas as pd
 import joblib
@@ -29,6 +30,15 @@ app = FastAPI(
     title="Exoplanet (Talent) Predictor API",
     description="Predicts if a candidate is CONFIRMED (1) or a FALSE POSITIVE (0).",
     lifespan=lifespan
+)
+
+# CORS — allow Streamlit (port 8501) to call this API
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # 2. Define the Pydantic Schema
