@@ -311,7 +311,7 @@ if st.session_state.phase1_results is not None:
                 return "background-color: #5e1414; color: #e74c3c; font-weight: 600;"
             return ""
 
-        styled_df = result_df.style.applymap(highlight_prediction, subset=["Prediction"])
+        styled_df = result_df.style.map(highlight_prediction, subset=["Prediction"])
         st.dataframe(styled_df, use_container_width=True, height=500)
 
 
