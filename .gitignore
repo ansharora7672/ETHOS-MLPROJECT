@@ -1,0 +1,6 @@
+# 1. Block the specific stuff we don't want
+*.csv
+*.ipynb
+.ipynb_checkpoints/
+**/__pycache__/
+**/readme-checkpoint.md
