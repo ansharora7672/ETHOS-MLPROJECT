@@ -134,6 +134,21 @@ async def predict_csv(file: UploadFile = File(...)):
         # Reorder columns to guarantee they match the exact expected order
         df = df[required_cols]
 
+        # Drop rows that are completely empty (blank lines in CSV)
+        df = df.dropna(how="all")
+
+        # Drop rows that have ANY missing values (model can't handle NaN reliably)
+        df = df.dropna()
+
+        # Reset index so row_index in results is clean
+        df = df.reset_index(drop=True)
+
+        if len(df) == 0:
+            raise HTTPException(
+                status_code=400,
+                detail="CSV contains no valid data rows after removing empty/missing values."
+            )
+
         # Make predictions for every single row instantly
         predictions = model.predict(df)
         

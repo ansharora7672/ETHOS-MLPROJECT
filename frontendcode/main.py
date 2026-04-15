@@ -51,6 +51,7 @@ st.set_page_config(
     page_title="Project E.T.H.O.S.",
     page_icon="🌌",
     layout="wide",
+    initial_sidebar_state="collapsed",
 )
 
 # ── ANIMATED SPACE BACKGROUND (Canvas + CSS) ─────────────────────────────────
@@ -756,48 +757,13 @@ if "phase1_results" not in st.session_state:
 if "phase1_mode" not in st.session_state:
     st.session_state.phase1_mode = None   # "single" or "csv"
 
-# ── SIDEBAR ───────────────────────────────────────────────────────────────────
-st.sidebar.markdown("""
-<div style="text-align:center; padding: 1rem 0;">
-    <div style="font-family: 'Orbitron', sans-serif; font-size: 1.3rem; font-weight: 700;
-                background: linear-gradient(135deg, #64b5f6, #a78bfa);
-                -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-                background-clip: text;">
-        🛰️ MISSION CONTROL
-    </div>
-    <div style="font-size: 0.7rem; color: #5a6a8a; letter-spacing: 3px; margin-top: 4px;
-                font-family: 'Orbitron', sans-serif; text-transform: uppercase;">
-        E.T.H.O.S. Command
-    </div>
-</div>
-""", unsafe_allow_html=True)
-
-st.sidebar.divider()
-
-st.sidebar.markdown(f"""
-<div style="font-size: 0.78rem; color: #5a6a8a; font-family: 'Exo 2', sans-serif;">
-    <span style="color: #3b82f6;">▸</span> Backend: <code style="color: #7b8cad; background: rgba(59,130,246,0.1);
-    padding: 2px 6px; border-radius: 4px; font-size: 0.72rem;">{API_BASE}</code>
-</div>
-""", unsafe_allow_html=True)
-
-if st.sidebar.button("🔄 Reset Pipeline", use_container_width=True):
-    for key in list(st.session_state.keys()):
-        del st.session_state[key]
-    st.rerun()
-
-st.sidebar.divider()
-
-st.sidebar.markdown("""
-<div style="font-family: 'Exo 2', sans-serif; font-size: 0.82rem; line-height: 1.8;">
-    <div style="color: #64b5f6; font-family: 'Orbitron', sans-serif; font-size: 0.72rem;
-                letter-spacing: 1px; margin-bottom: 8px;">◈ ACTIVE MODULE</div>
-    <div style="color: #8ba4cc;">
-        <span style="color: #2ecc71;">●</span> <strong>Exoplanet Discovery</strong><br/>
-        <span style="font-size: 0.75rem; color: #5a6a8a; margin-left: 16px;">
-            Random Forest Classifier</span>
-    </div>
-</div>
+# ── SIDEBAR (hidden) ──────────────────────────────────────────────────────────
+# Sidebar removed — hide the toggle button via CSS so it can't get stuck
+st.markdown("""
+<style>
+    [data-testid="stSidebar"] { display: none; }
+    [data-testid="collapsedControl"] { display: none; }
+</style>
 """, unsafe_allow_html=True)
 
 # ── HERO HEADER ───────────────────────────────────────────────────────────────
@@ -895,6 +861,8 @@ with tab_csv:
         # Preview the uploaded data
         try:
             preview_df = pd.read_csv(io.StringIO(uploaded_file.getvalue().decode("utf-8")))
+            preview_df = preview_df.dropna(how="all")  # Remove completely empty rows
+            preview_df = preview_df.reset_index(drop=True)
             st.markdown(f"""
             <div class="glass-card" style="padding: 1rem 1.5rem;">
                 <span style="color: #64b5f6;">📄</span>
